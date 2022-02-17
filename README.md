@@ -1,2 +1,3 @@
-# aeolos
-PWM Fan controller.
+# Aeolos
+
+Arduino PWM Fan controller.
