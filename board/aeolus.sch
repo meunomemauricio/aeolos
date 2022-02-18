@@ -1,0 +1,354 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr User 5906 5512
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L MCU_Module:Arduino_Nano_v2.x A1
+U 1 1 60625FF1
+P 4200 1850
+F 0 "A1" H 4200 300 50  0000 C CNN
+F 1 "Arduino_Nano_v2.x" H 4200 400 50  0000 C CNN
+F 2 "Module:Arduino_Nano" H 4200 1850 50  0001 C CIN
+F 3 "https://www.arduino.cc/en/uploads/Main/ArduinoNanoManual23.pdf" H 4200 1850 50  0001 C CNN
+	1    4200 1850
+	1    0    0    -1
+$EndComp
+$Comp
+L Device:R R2
+U 1 1 6062ABCF
+P 3300 1700
+F 0 "R2" H 3370 1746 50  0000 L CNN
+F 1 "10k" H 3370 1655 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 3230 1700 50  0001 C CNN
+F 3 "~" H 3300 1700 50  0001 C CNN
+	1    3300 1700
+	1    0    0    -1
+$EndComp
+$Comp
+L Device:R R1
+U 1 1 6062C06D
+P 1750 1500
+F 0 "R1" H 1820 1546 50  0000 L CNN
+F 1 "10k" H 1820 1455 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 1680 1500 50  0001 C CNN
+F 3 "~" H 1750 1500 50  0001 C CNN
+	1    1750 1500
+	1    0    0    -1
+$EndComp
+$Comp
+L power:+3.3V #PWR0101
+U 1 1 6062DE5C
+P 1750 1200
+F 0 "#PWR0101" H 1750 1050 50  0001 C CNN
+F 1 "+3.3V" H 1765 1373 50  0000 C CNN
+F 2 "" H 1750 1200 50  0001 C CNN
+F 3 "" H 1750 1200 50  0001 C CNN
+	1    1750 1200
+	1    0    0    -1
+$EndComp
+$Comp
+L power:+3.3V #PWR0102
+U 1 1 6062E736
+P 3300 1450
+F 0 "#PWR0102" H 3300 1300 50  0001 C CNN
+F 1 "+3.3V" H 3315 1623 50  0000 C CNN
+F 2 "" H 3300 1450 50  0001 C CNN
+F 3 "" H 3300 1450 50  0001 C CNN
+	1    3300 1450
+	1    0    0    -1
+$EndComp
+$Comp
+L Transistor_FET:IRF540N Q2
+U 1 1 60630C3B
+P 2650 1450
+F 0 "Q2" H 2854 1496 50  0000 L CNN
+F 1 "IRF540N" H 2854 1405 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-220-3_Vertical" H 2900 1375 50  0001 L CIN
+F 3 "http://www.irf.com/product-info/datasheets/data/irf540n.pdf" H 2650 1450 50  0001 L CNN
+	1    2650 1450
+	1    0    0    -1
+$EndComp
+Wire Wire Line
+	2450 1450 2250 1450
+Wire Wire Line
+	1750 1350 1750 1200
+Wire Wire Line
+	3300 1450 3300 1550
+Wire Wire Line
+	1750 1650 1750 1850
+$Comp
+L power:GND #PWR0103
+U 1 1 606386F2
+P 2750 1750
+F 0 "#PWR0103" H 2750 1500 50  0001 C CNN
+F 1 "GND" H 2755 1577 50  0000 C CNN
+F 2 "" H 2750 1750 50  0001 C CNN
+F 3 "" H 2750 1750 50  0001 C CNN
+	1    2750 1750
+	1    0    0    -1
+$EndComp
+$Comp
+L power:GND #PWR0104
+U 1 1 60638F73
+P 4300 2950
+F 0 "#PWR0104" H 4300 2700 50  0001 C CNN
+F 1 "GND" H 4305 2777 50  0000 C CNN
+F 2 "" H 4300 2950 50  0001 C CNN
+F 3 "" H 4300 2950 50  0001 C CNN
+	1    4300 2950
+	1    0    0    -1
+$EndComp
+$Comp
+L power:+3.3V #PWR0105
+U 1 1 60639461
+P 4300 750
+F 0 "#PWR0105" H 4300 600 50  0001 C CNN
+F 1 "+3.3V" H 4315 923 50  0000 C CNN
+F 2 "" H 4300 750 50  0001 C CNN
+F 3 "" H 4300 750 50  0001 C CNN
+	1    4300 750
+	1    0    0    -1
+$EndComp
+Wire Wire Line
+	4300 850  4300 750
+Wire Wire Line
+	4300 2950 4300 2900
+Wire Wire Line
+	2750 1650 2750 1750
+Wire Wire Line
+	3700 2050 3300 2050
+Wire Wire Line
+	3300 2050 3300 1850
+Wire Wire Line
+	3700 2250 2250 2250
+Wire Wire Line
+	2250 1450 2250 1650
+$Comp
+L Transistor_BJT:BC549 Q1
+U 1 1 6062F58E
+P 2150 1850
+F 0 "Q1" H 2341 1896 50  0000 L CNN
+F 1 "BC549" H 2341 1805 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-92_Inline" H 2350 1775 50  0001 L CIN
+F 3 "https://www.onsemi.com/pub/Collateral/BC550-D.pdf" H 2150 1850 50  0001 L CNN
+	1    2150 1850
+	1    0    0    -1
+$EndComp
+Wire Wire Line
+	2250 2250 2250 2050
+$Comp
+L power:+12V #PWR0106
+U 1 1 60665776
+P 4100 750
+F 0 "#PWR0106" H 4100 600 50  0001 C CNN
+F 1 "+12V" H 4115 923 50  0000 C CNN
+F 2 "" H 4100 750 50  0001 C CNN
+F 3 "" H 4100 750 50  0001 C CNN
+	1    4100 750
+	1    0    0    -1
+$EndComp
+$Comp
+L Connector:Conn_01x02_Male J2
+U 1 1 606689C5
+P 750 1400
+F 0 "J2" H 1000 700 50  0000 C CNN
+F 1 "Conn_01x02_Male" H 1000 800 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 750 1400 50  0001 C CNN
+F 3 "~" H 750 1400 50  0001 C CNN
+	1    750  1400
+	1    0    0    -1
+$EndComp
+$Comp
+L power:+12V #PWR0107
+U 1 1 6066ABE9
+P 1250 1250
+F 0 "#PWR0107" H 1250 1100 50  0001 C CNN
+F 1 "+12V" H 1265 1423 50  0000 C CNN
+F 2 "" H 1250 1250 50  0001 C CNN
+F 3 "" H 1250 1250 50  0001 C CNN
+	1    1250 1250
+	1    0    0    -1
+$EndComp
+$Comp
+L power:GND #PWR0108
+U 1 1 6066E06B
+P 1250 1650
+F 0 "#PWR0108" H 1250 1400 50  0001 C CNN
+F 1 "GND" H 1255 1477 50  0000 C CNN
+F 2 "" H 1250 1650 50  0001 C CNN
+F 3 "" H 1250 1650 50  0001 C CNN
+	1    1250 1650
+	1    0    0    -1
+$EndComp
+Wire Wire Line
+	950  1400 1250 1400
+Wire Wire Line
+	1250 1400 1250 1250
+Wire Wire Line
+	950  1500 1250 1500
+Wire Wire Line
+	1250 1500 1250 1650
+Text Label 2600 2900 0    50   ~ 0
+PWM
+Wire Wire Line
+	2300 2900 2600 2900
+Text Label 2600 3000 0    50   ~ 0
+TACH
+$Comp
+L power:+12V #PWR0109
+U 1 1 6067B422
+P 2900 2800
+F 0 "#PWR0109" H 2900 2650 50  0001 C CNN
+F 1 "+12V" H 2915 2973 50  0000 C CNN
+F 2 "" H 2900 2800 50  0001 C CNN
+F 3 "" H 2900 2800 50  0001 C CNN
+	1    2900 2800
+	1    0    0    -1
+$EndComp
+Wire Wire Line
+	2300 3100 2900 3100
+Wire Wire Line
+	2900 3100 2900 2800
+Text Label 2600 3200 0    50   ~ 0
+FAN_GND
+Wire Wire Line
+	2300 3200 2600 3200
+Text Label 2750 1100 1    50   ~ 0
+FAN_GND
+Wire Wire Line
+	2750 1250 2750 1100
+Text Label 3550 1350 1    50   ~ 0
+PWM
+Wire Wire Line
+	3700 1550 3550 1550
+Wire Wire Line
+	3550 1550 3550 1350
+$Comp
+L Connector:Conn_01x04_Male J1
+U 1 1 60666D54
+P 2100 3000
+F 0 "J1" H 2250 2550 50  0000 C CNN
+F 1 "Conn_01x04_Male" H 2250 2650 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical" H 2100 3000 50  0001 C CNN
+F 3 "~" H 2100 3000 50  0001 C CNN
+	1    2100 3000
+	1    0    0    -1
+$EndComp
+$Comp
+L Device:CP1 C1
+U 1 1 606D3729
+P 1200 2850
+F 0 "C1" H 1315 2896 50  0000 L CNN
+F 1 "1uF" H 1315 2805 50  0000 L CNN
+F 2 "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm" H 1200 2850 50  0001 C CNN
+F 3 "~" H 1200 2850 50  0001 C CNN
+	1    1200 2850
+	1    0    0    -1
+$EndComp
+$Comp
+L power:+12V #PWR0110
+U 1 1 606D46DC
+P 1200 2600
+F 0 "#PWR0110" H 1200 2450 50  0001 C CNN
+F 1 "+12V" H 1215 2773 50  0000 C CNN
+F 2 "" H 1200 2600 50  0001 C CNN
+F 3 "" H 1200 2600 50  0001 C CNN
+	1    1200 2600
+	1    0    0    -1
+$EndComp
+$Comp
+L power:GND #PWR0111
+U 1 1 606D4C60
+P 1200 3100
+F 0 "#PWR0111" H 1200 2850 50  0001 C CNN
+F 1 "GND" H 1205 2927 50  0000 C CNN
+F 2 "" H 1200 3100 50  0001 C CNN
+F 3 "" H 1200 3100 50  0001 C CNN
+	1    1200 3100
+	1    0    0    -1
+$EndComp
+Wire Wire Line
+	1200 2700 1200 2600
+Wire Wire Line
+	1750 1850 1950 1850
+NoConn ~ 4700 1250
+NoConn ~ 4400 850
+NoConn ~ 4700 1350
+NoConn ~ 4700 1650
+NoConn ~ 4700 1850
+NoConn ~ 4700 1950
+NoConn ~ 4700 2050
+NoConn ~ 4700 2150
+NoConn ~ 4700 2250
+NoConn ~ 4700 2350
+NoConn ~ 4700 2450
+NoConn ~ 4700 2550
+NoConn ~ 3700 2550
+NoConn ~ 4200 2850
+NoConn ~ 3700 2450
+NoConn ~ 3700 2350
+NoConn ~ 3700 2150
+NoConn ~ 3700 1950
+NoConn ~ 3700 1850
+NoConn ~ 3700 1750
+NoConn ~ 3700 1650
+NoConn ~ 3700 1450
+NoConn ~ 3700 1350
+NoConn ~ 3700 1250
+Wire Wire Line
+	2600 3000 2300 3000
+Wire Wire Line
+	1200 3000 1200 3100
+Wire Wire Line
+	4100 750  4100 800
+Text Label 3200 2050 2    50   ~ 0
+TACH
+Wire Wire Line
+	3200 2050 3300 2050
+Connection ~ 3300 2050
+Connection ~ 4100 800
+Wire Wire Line
+	4100 800  4100 850
+Wire Wire Line
+	4100 800  3750 800
+Wire Wire Line
+	3750 800  3750 750
+$Comp
+L power:PWR_FLAG #FLG0101
+U 1 1 606F86AA
+P 3750 750
+F 0 "#FLG0101" H 3750 825 50  0001 C CNN
+F 1 "PWR_FLAG" H 3750 923 50  0000 C CNN
+F 2 "" H 3750 750 50  0001 C CNN
+F 3 "~" H 3750 750 50  0001 C CNN
+	1    3750 750
+	1    0    0    -1
+$EndComp
+$Comp
+L power:PWR_FLAG #FLG0102
+U 1 1 606FEAFB
+P 4550 2900
+F 0 "#FLG0102" H 4550 2975 50  0001 C CNN
+F 1 "PWR_FLAG" H 4800 2950 50  0000 C CNN
+F 2 "" H 4550 2900 50  0001 C CNN
+F 3 "~" H 4550 2900 50  0001 C CNN
+	1    4550 2900
+	1    0    0    -1
+$EndComp
+Wire Wire Line
+	4550 2900 4300 2900
+Connection ~ 4300 2900
+Wire Wire Line
+	4300 2900 4300 2850
+$EndSCHEMATC
