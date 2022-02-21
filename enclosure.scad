@@ -1,6 +1,32 @@
 // Aeolos Enclosure Design
 // Units in mm (millimeters).
 
+// Fan Dimensions
+
+fan_w = 120;  
+fan_d = 25;  
+fan_h = 120;  
+fan_corner_r = 7.5;
+
+fan_hole_w = 105;
+fan_hole_d = fan_d + 2;
+fan_hole_h = 105;
+fan_hole_r = 4.5 / 2;
+
+fan_duct_d = fan_d + 2;
+fan_duct_r = 115 / 2;
+
+
+// Tolerance between the Fan and the Enclosure
+enc_fan_tol = 1;
+
+// Enclosure Dimensions
+
+enc_w = fan_w + 5 * 2;
+enc_d = fan_d + 2.5 * 2;
+enc_h = fan_h + 5 * 2;
+enc_corner_r = 10;
+
 /* Cube with Rounded corners. */
 module roundedcube(width, depth, height, radius) {
     translate ([-width/2, depth/2, -height/2])
@@ -22,40 +48,48 @@ module roundedcube(width, depth, height, radius) {
 
 /* Fan */
 module fan() {
-    width = 120;  
-    depth = 25;  
-    height = 120;  
-    corner_r = 7.5;
+  difference() {
+    roundedcube(fan_w, fan_d, fan_h, fan_corner_r);
+    rotate([90, 0, 0]) {
+      // Duct
+      translate([0, 0, -fan_duct_d/2])
+        cylinder(h=fan_duct_d, r=fan_duct_r);
 
-    hole_w = 105;
-    hole_d = depth + 2;
-    hole_h = 105;
-    hole_r = 4.5 / 2;
+      // Mount fan_holes
+      translate([-fan_hole_w / 2, -fan_hole_h / 2, -fan_hole_d/2])
+        cylinder(h=fan_hole_d, r=fan_hole_r);
 
-    duct_d = depth + 2;
-    duct_r = 115 / 2;
+      translate([fan_hole_w / 2, -fan_hole_h / 2, -fan_hole_d/2])
+        cylinder(h=fan_hole_d, r=fan_hole_r);
 
-    difference() {
-      roundedcube(width, depth, height, corner_r);
-      rotate([90, 0, 0]) {
-        // Duct
-        translate([0, 0, -duct_d/2])
-          cylinder(h=duct_d, r=duct_r);
+      translate([-fan_hole_w / 2, fan_hole_h / 2, -fan_hole_d/2])
+        cylinder(h=fan_hole_d, r=fan_hole_r);
 
-        // Mount Holes
-        translate([-hole_w / 2, -hole_h / 2, -hole_d/2])
-          cylinder(h=hole_d, r=hole_r);
-
-        translate([hole_w / 2, -hole_h / 2, -hole_d/2])
-          cylinder(h=hole_d, r=hole_r);
-
-        translate([-hole_w / 2, hole_h / 2, -hole_d/2])
-          cylinder(h=hole_d, r=hole_r);
-
-        translate([hole_w / 2, hole_h / 2, -hole_d/2])
-          cylinder(h=hole_d, r=hole_r);
-      }
+      translate([fan_hole_w / 2, fan_hole_h / 2, -fan_hole_d/2])
+        cylinder(h=fan_hole_d, r=fan_hole_r);
     }
+  }
 }
 
-fan();
+/* Enclosure */
+module enclosure() {
+  difference() {
+    roundedcube(enc_w, enc_d, enc_h, enc_corner_r);
+
+    insert_w = fan_w + enc_fan_tol;
+    insert_d = fan_d + enc_fan_tol;
+    insert_h = fan_h + enc_fan_tol + 5;
+
+    translate([0, 0, 5])
+      cube([insert_w, insert_d, insert_h], center=true);
+  }
+}
+
+// Final Assenbly
+
+translate([0, 0, fan_h/2 + 10])
+  fan();
+
+translate([0, 0, enc_h/2])
+  color([0.5, 0.5, 0.5, .7])
+  enclosure(); 
