@@ -46,7 +46,58 @@ module roundedcube(width, depth, height, radius) {
       }
 }
 
-/* Fan */
+/* Solid Hexagonal Prism. */
+module hex(height, radius) {
+	cylinder(height, r=radius, $fn=6);
+}
+
+/* Hexagom Cell. */
+module hex_cell(height, radius, wall_tk) {
+	difference() {
+		hex(height, radius + wall_tk);
+		translate([0, 0, -.1])
+			hex(height * 3, radius - wall_tk);
+	}
+}
+
+/* Honeycomb Mesh.
+ *
+ * The `radius` parameter is the Circumradius.
+ */
+module honeycomb(width, depth, height, radius, wall_tk) {
+  inradius = cos(30) * radius;
+  h_step = 3/2 * radius;  // Horizontal Step
+ 
+  translate([-width/2, 0, -height/2]) difference() {
+    // Honeycomb Pattern
+    translate([0, depth/2, 0]) rotate([90, 0, 0]) {
+      for (i = [0 : width / h_step ]) {
+        for (j = [0 : height / inradius ]) {
+          if ((i+j) % 2 == 0) {
+            translate([i * h_step, j * inradius, 0])
+              hex_cell(depth, radius, wall_tk);
+          }
+        }
+      }
+    }
+
+    // Trim the Honeycomb excess using 4 cubes
+    translate([width / 2, 0, height + radius / 2])
+      cube([width * 2, depth * 2, radius], center=true);
+
+    translate([width / 2, 0, -radius / 2])
+      cube([width * 2, depth * 2, radius], center=true);
+
+    translate([-(radius + wall_tk) / 2, 0, height / 2])
+      cube([radius + wall_tk, depth * 2, height * 2], center=true);
+
+    translate([height + (radius + wall_tk)/2, 0, height / 2])
+      cube([radius + wall_tk, depth * 2, height * 2], center=true);
+  }
+}
+
+
+/* Fan. */
 module fan() {
   difference() {
     roundedcube(fan_w, fan_d, fan_h, fan_corner_r);
@@ -87,9 +138,11 @@ module enclosure() {
 
 // Final Assenbly
 
-translate([0, 0, fan_h/2 + 10])
-  fan();
+// translate([0, 0, fan_h/2 + 10])
+//   fan();
 
-translate([0, 0, enc_h/2])
-  color([0.5, 0.5, 0.5, .7])
-  enclosure(); 
+// translate([0, 0, enc_h/2])
+//   color([0.5, 0.5, 0.5, .7])
+//   enclosure(); 
+
+honeycomb(120, 20, 120, 10, 0.5);
