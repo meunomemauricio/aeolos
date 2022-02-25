@@ -18,6 +18,7 @@ fan_duct_r = 115 / 2;
 
 
 // Tolerance between the Fan and the Enclosure
+
 enc_fan_tol = 1;
 
 // Enclosure Dimensions
@@ -26,6 +27,15 @@ enc_w = fan_w + 5 * 2;
 enc_d = fan_d + 2.5 * 2;
 enc_h = fan_h + 5 * 2;
 enc_corner_r = 10;
+
+// Honeycomb parameters
+
+hcomb_w = fan_w;
+hcomb_d = fan_d * 2;
+hcomb_h = fan_h;
+hcomb_r = 5;
+hcomb_tk = .6;  // Wall Thickness
+
 
 /* Cube with Rounded corners. */
 module roundedcube(width, depth, height, radius) {
@@ -68,9 +78,11 @@ module honeycomb(width, depth, height, radius, wall_tk) {
   inradius = cos(30) * radius;
   h_step = 3/2 * radius;  // Horizontal Step
  
-  translate([-width/2, 0, -height/2]) difference() {
+  difference() {
+    cube([width, depth, height], center=true);
+
     // Honeycomb Pattern
-    translate([0, depth/2, 0]) rotate([90, 0, 0]) {
+    translate([-width/2, depth/2, -height/2]) rotate([90, 0, 0]) {
       for (i = [0 : width / h_step ]) {
         for (j = [0 : height / inradius ]) {
           if ((i+j) % 2 == 0) {
@@ -80,19 +92,6 @@ module honeycomb(width, depth, height, radius, wall_tk) {
         }
       }
     }
-
-    // Trim the Honeycomb excess using 4 cubes
-    translate([width / 2, 0, height + radius / 2])
-      cube([width * 2, depth * 2, radius], center=true);
-
-    translate([width / 2, 0, -radius / 2])
-      cube([width * 2, depth * 2, radius], center=true);
-
-    translate([-(radius + wall_tk) / 2, 0, height / 2])
-      cube([radius + wall_tk, depth * 2, height * 2], center=true);
-
-    translate([height + (radius + wall_tk)/2, 0, height / 2])
-      cube([radius + wall_tk, depth * 2, height * 2], center=true);
   }
 }
 
@@ -133,16 +132,17 @@ module enclosure() {
 
     translate([0, 0, 5])
       cube([insert_w, insert_d, insert_h], center=true);
+
+    honeycomb(hcomb_w, hcomb_d, hcomb_h, hcomb_r, hcomb_tk);
   }
 }
 
 // Final Assenbly
 
-// translate([0, 0, fan_h/2 + 10])
-//   fan();
+translate([0, 0, fan_h/2 + 10])
+  color([.3, .3, .3])
+  fan();
 
-// translate([0, 0, enc_h/2])
-//   color([0.5, 0.5, 0.5, .7])
-//   enclosure(); 
-
-honeycomb(120, 20, 120, 10, 0.5);
+translate([0, 0, enc_h/2])
+  // color([0.5, 0.5, 0.5, .6])
+  enclosure(); 
