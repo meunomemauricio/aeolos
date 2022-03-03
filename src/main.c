@@ -4,7 +4,7 @@
 
 /** Defines */
 #define BAUD_RATE 9600
-#define SAMPLE_TIME 33 // ms
+#define SAMPLE_TIME 33  // ms
 
 // Pins
 #define BTN_MINUS 5
@@ -41,10 +41,9 @@ double kp = 0.01343, ki = 0.02526, kd = 0.00397;
 PID pid_cntlr(&rpm_value, &output, &setpoint, kp, ki, kd, DIRECT);
 
 /** Setup Fan and Tachometer pins. */
-void setup_pins()
-{
+void setup_pins() {
   pinMode(FAN_POWER, OUTPUT);
-  digitalWrite(FAN_POWER, LOW); // Make sure the FAN is off when booting
+  digitalWrite(FAN_POWER, LOW);  // Make sure the FAN is off when booting
 
   pinMode(FAN_CONTROL, OUTPUT);
   pinMode(FAN_TACH, INPUT);
@@ -61,8 +60,7 @@ void setup_pins()
  * TODO: Optimize?
  * TODO: Is this even accurate?
  */
-double convert_to_rpm(unsigned int duration)
-{
+double convert_to_rpm(unsigned int duration) {
   return 7500000.0 / (double)duration;
 }
 
@@ -73,8 +71,7 @@ double convert_to_rpm(unsigned int duration)
     OCRA = -------- - 1 = ------------- - 1 = 87,88... ~= 88
             Ps * f         8 * 22.5KHz
  */
-void setup_pwm()
-{
+void setup_pwm() {
   // Timer 2 - Fast PWM - Non Inverting -
   TCCR2A = bit(COM2B1) | bit(WGM21) | bit(WGM20);
   // TOP OCRA - Clk/8
@@ -83,12 +80,11 @@ void setup_pwm()
   OCR2B = 0;
 }
 
-/** Setup Timer 1 for Input Capture. 
- * 
+/** Setup Timer 1 for Input Capture.
+ *
  * Used to capture transitions from the Fan Speed Sensor.
  */
-void setup_input_capture()
-{
+void setup_input_capture() {
   TCCR1A = 0;
   // Input Capture Noise Canceler + Rising Edge + Clk/64
   TCCR1B = bit(ICNC1) | bit(ICES1) | bit(CS11) | bit(CS10);
@@ -100,8 +96,7 @@ void setup_input_capture()
 }
 
 /** Setup the PID Controller. */
-void setup_controller()
-{
+void setup_controller() {
   pid_cntlr.SetMode(AUTOMATIC);
   pid_cntlr.SetControllerDirection(DIRECT);
   pid_cntlr.SetOutputLimits(MIN_ACTUATOR, MAX_ACTUATOR);
@@ -110,11 +105,10 @@ void setup_controller()
 }
 
 /** Turn the Fan Power OFF. */
-void fan_off()
-{
+void fan_off() {
   digitalWrite(FAN_POWER, LOW);
-  bitClear(TIMSK1, ICIE1);   // Disable sensor interrupt
-  pid_cntlr.SetMode(MANUAL); // Disable controller while powered off
+  bitClear(TIMSK1, ICIE1);    // Disable sensor interrupt
+  pid_cntlr.SetMode(MANUAL);  // Disable controller while powered off
   setpoint = MIN_RPM;
   OCR2B = 0;
   rpm_value = 0;
@@ -125,17 +119,15 @@ void fan_off()
  *
  * The Setpoint is reset to MIN_RPM when turning it on.
  */
-void fan_on()
-{
-  bitSet(TIMSK1, ICIE1); // Reenable sensor interrupt
+void fan_on() {
+  bitSet(TIMSK1, ICIE1);  // Reenable sensor interrupt
   digitalWrite(FAN_POWER, HIGH);
-  pid_cntlr.SetMode(AUTOMATIC); // Reenable the controller
+  pid_cntlr.SetMode(AUTOMATIC);  // Reenable the controller
   power_status = true;
 }
 
 /** Setup function */
-void setup()
-{
+void setup() {
   Serial.begin(BAUD_RATE);
   setup_pins();
   setup_pwm();
@@ -145,8 +137,7 @@ void setup()
 }
 
 /** Interrupt function for Capture Events. */
-ISR(TIMER1_CAPT_vect)
-{
+ISR(TIMER1_CAPT_vect) {
   rpm_value = convert_to_rpm(ICR1);
   // Reset the Counter and clear the interrupt
   TCNT1 = 0;
