@@ -1,4 +1,4 @@
-"""GUI for manually controlling the fan."""
+"""GUI for monitoring fan speed."""
 
 import numpy as np
 import os
@@ -60,6 +60,7 @@ class FanControllerMainWindow(QMainWindow):
     def _set_timer(self):
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_data)
+        # TODO: Start/Stop timer with connect/disconnect
         self.timer.start(self.UPDATE_PERIOD)
 
     def _setup_plot(self):

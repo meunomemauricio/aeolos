@@ -216,7 +216,7 @@ void process_controller(void) {
   unsigned long current_millis = millis();
   if (current_millis - previous_millis >= SAMPLE_TIME) {
     previous_millis = current_millis;
-    print_speed();
+    print_speed();  // TODO: Enable/Disable via build settings
 
     if (power_status) {
       pid_cntlr.Compute();

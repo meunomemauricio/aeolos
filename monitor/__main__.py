@@ -1,4 +1,4 @@
-"""Start TUI for Manual control of the fan."""
+"""Start Monitor GUI."""
 
 from .gui import run_gui
 
