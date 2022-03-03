@@ -51,7 +51,7 @@ void handle_btn_event(AceButton*, uint8_t, uint8_t);  // Fwr Ref
 volatile double rpm_value = 0.0;
 
 // Controller
-double setpoint = MIN_ACTUATOR;
+double setpoint = 0.0;
 double output = 0.0;
 double kp = 0.01343, ki = 0.02526, kd = 0.00397;
 
