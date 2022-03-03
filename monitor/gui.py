@@ -14,9 +14,9 @@ from pyqtgraph import mkPen
 class FanControllerMainWindow(QMainWindow):
     """Application Main window."""
 
-    UPDATE_PERIOD = 33
+    UPDATE_PERIOD = 22
     WINDOW_SIZE = 660
-    PLOT_RANGE = (0, 4000)
+    PLOT_RANGE = (0, 2000)
 
     # TODO: Configure port and baud via GUI
     PORT = "/dev/ttyUSB0"
@@ -104,6 +104,11 @@ class FanControllerMainWindow(QMainWindow):
             pen=mkPen("y", style=Qt.DashLine),
         )
 
+    def _update_labels(self, speed: float, setpoint: float) -> None:
+        """Display the current Speed and Setpoint in their respective labels."""
+        self.rpmLabel.setText(speed.decode("utf-8"))
+        self.spLabel.setText(setpoint.decode("utf-8"))
+
     # TODO: Move to another thread?
     def update_data(self):
         if not self.serial.is_open:
@@ -112,7 +117,8 @@ class FanControllerMainWindow(QMainWindow):
         while self.serial.in_waiting:
             line = self.serial.readline()
             speed, setpoint = line.strip().split(b',', maxsplit=1)
-            self._add_data_points(float(speed), float(setpoint))
+            self._add_data_points(speed=float(speed), setpoint=float(setpoint))
+            self._update_labels(speed=speed, setpoint=setpoint)
 
 
 def run_gui():

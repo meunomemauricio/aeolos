@@ -8,7 +8,7 @@ using namespace ace_button;
 
 /** Defines */
 #define BAUD_RATE 115200
-#define SAMPLE_TIME 33  // ms
+#define SAMPLE_TIME 22  // ms
 
 // Pins
 #define BTN_DECREASE 5
@@ -21,8 +21,8 @@ using namespace ace_button;
 // TODO: Documment value choice
 #define OCRA_VALUE 88
 
-#define MIN_RPM 750
-#define MAX_RPM 2000
+#define MIN_RPM 550
+#define MAX_RPM 1750
 
 #define RPN_STEP_N 9  // Number of desired steps, minus 1
 
@@ -53,7 +53,7 @@ volatile double rpm_value = 0.0;
 // Controller
 double setpoint = 0.0;
 double output = 0.0;
-double kp = 0.01343, ki = 0.02526, kd = 0.00397;
+double kp = 0.15, ki = 0.22, kd = 0.005;
 
 // TODO: Figure out how to solve the volatile warning
 PID pid_cntlr(&rpm_value, &output, &setpoint, kp, ki, kd, DIRECT);
@@ -110,7 +110,6 @@ void setup_controller() {
   pid_cntlr.SetControllerDirection(DIRECT);
   pid_cntlr.SetOutputLimits(MIN_ACTUATOR, MAX_ACTUATOR);
   pid_cntlr.SetSampleTime(SAMPLE_TIME);
-  setpoint = MIN_RPM;
 }
 
 /** Main Setup function */
