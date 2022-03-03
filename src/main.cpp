@@ -22,7 +22,9 @@ using namespace ace_button;
 #define OCRA_VALUE 88
 
 #define MIN_RPM 750
-#define MAX_RPM 3800
+#define MAX_RPM 2000
+
+#define SP_STEP_N 9  // Number of desired steps, minus 1
 
 #define MIN_ACTUATOR 0
 #define MAX_ACTUATOR OCRA_VALUE
@@ -31,8 +33,12 @@ using namespace ace_button;
 // Main Loop Timing
 unsigned long previous_millis = 0;
 
-// Power
+// Fan Variables
 bool power_status = false;
+
+const double rpm_step = (MAX_RPM - MIN_RPM) / (double)SP_STEP_N;
+// How many speed steps are active. -1 turns it off.
+int8_t fan_steps = 0;
 
 // Buttons
 ButtonConfig btn_cfg;
@@ -144,10 +150,11 @@ ISR(TIMER1_CAPT_vect) {
 
 /** Turn the Fan Power OFF. */
 void fan_off() {
+  Serial.println("OFF");
   digitalWrite(FAN_POWER, LOW);
   bitClear(TIMSK1, ICIE1);    // Disable sensor interrupt
   pid_cntlr.SetMode(MANUAL);  // Disable controller while powered off
-  setpoint = MIN_RPM;
+  setpoint = 0;
   OCR2B = 0;
   rpm_value = 0;
   power_status = false;
@@ -158,25 +165,36 @@ void fan_off() {
  * The Setpoint is reset to MIN_RPM when turning it on.
  */
 void fan_on() {
+  Serial.println("ON");
   bitSet(TIMSK1, ICIE1);  // Reenable sensor interrupt
   digitalWrite(FAN_POWER, HIGH);
+  setpoint = MIN_RPM;
   pid_cntlr.SetMode(AUTOMATIC);  // Reenable the controller
   power_status = true;
 }
 
-// Button Event Handlers
-
-void handle_dec_event(AceButton*, uint8_t event_type, uint8_t) {}
-
+/** Button Event Handler.  */
 void handle_btn_event(AceButton* btn, uint8_t event_type, uint8_t) {
   if (event_type != AceButton::kEventReleased) {
     return;
   }
 
   if (btn->getPin() == BTN_DECREASE) {
-    Serial.println("Decrease!");
+    if (fan_steps > -1) {
+      fan_steps--;
+    }
   } else {
-    Serial.println("Increase!");
+    if (fan_steps < SP_STEP_N) {
+      fan_steps++;
+    }
+  }
+
+  if (power_status && fan_steps < 0) {
+    fan_off();
+  } else if (!power_status && fan_steps >= 0) {
+    fan_on();
+  } else if (fan_steps >= 0) {
+    setpoint = MIN_RPM + (fan_steps * rpm_step);
   }
 }
 
