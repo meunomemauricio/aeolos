@@ -2,6 +2,7 @@
 
 import numpy as np
 import os
+import serial
 import sys
 
 from PyQt5 import uic
@@ -17,10 +18,22 @@ class FanControllerMainWindow(QMainWindow):
     WINDOW_SIZE = 660
     PLOT_RANGE = (0, 4000)
 
+    # TODO: Configure port and baud via GUI
+    PORT = "/dev/ttyUSB0"
+    BAUD_RATE = 115200
+    TIMEOUT = 1.0
+
     def __init__(self, app):
         super(FanControllerMainWindow, self).__init__()
 
         self.app = app
+        self.serial = serial.Serial(
+            port=None,
+            baudrate=self.BAUD_RATE,
+            timeout=self.TIMEOUT,
+        )
+        # Not defined via constructor so we can open connection later
+        self.serial.port = self.PORT
 
         # Load UI and Set it up
         ui_file = os.path.join(os.path.dirname(__file__), "main_window.ui")
@@ -58,8 +71,8 @@ class FanControllerMainWindow(QMainWindow):
         self.plot_item = self.graphicsView.getPlotItem()
         self.plot_item.setYRange(*self.PLOT_RANGE)
         self.plot_item.setMouseEnabled(False, False)
+
         self.speed_curve = self.graphicsView.plot(self.speed_data)
-        self.actuator_curve = self.graphicsView.plot(self.actuator_data)
         self.setpoint_curve = self.graphicsView.plot(self.setpoint_data)
 
     def _toggle_buttons(self, connected):
@@ -69,33 +82,37 @@ class FanControllerMainWindow(QMainWindow):
 
     def connect(self):
         """Connect and Sync with the Controller."""
-        # self.fan_iface.connect("/dev/ttyUSB0", 115200)
+        self.serial.open()
         self._toggle_buttons(connected=True)
 
     def disconnect(self):
         """Disconnect from the controller."""
-        # self.fan_iface.disconnect()
+        self.serial.close()
         self._toggle_buttons(connected=False)
 
-    # TODO: Move to another thread
+    def _add_data_points(self, speed: float, setpoint: float) -> None:
+        """Add new data points to graph, making sure to rotate data as necessary."""
+        self.speed_data[:-1] = self.speed_data[1:]
+        self.speed_data[-1] = speed
+        self.speed_curve.setData(self.speed_data, connect="finite")
+
+        self.setpoint_data[:-1] = self.setpoint_data[1:]
+        self.setpoint_data[-1] = setpoint
+        self.setpoint_curve.setData(
+            self.setpoint_data,
+            connect="finite",
+            pen=mkPen("y", style=Qt.DashLine),
+        )
+
+    # TODO: Move to another thread?
     def update_data(self):
-        print("Update Data.")
+        if not self.serial.is_open:
+            return
 
-        # self.speed_data[:-1] = self.speed_data[1:]
-        # self.speed_data[-1] = rpm_value
-        # self.speed_curve.setData(self.speed_data, connect="finite")
-
-        # self.actuator_data[:-1] = self.actuator_data[1:]
-        # self.actuator_data[-1] = actuator
-        # self.actuator_curve.setData(self.actuator_data, connect="finite")
-
-        # self.setpoint_data[:-1] = self.setpoint_data[1:]
-        # self.setpoint_data[-1] = self.setpoint
-        # self.setpoint_curve.setData(
-        #     self.setpoint_data,
-        #     connect="finite",
-        #     pen=mkPen("y", style=Qt.DashLine),
-        # )
+        while self.serial.in_waiting:
+            line = self.serial.readline()
+            speed, setpoint = line.strip().split(b',', maxsplit=1)
+            self._add_data_points(float(speed), float(setpoint))
 
 
 def run_gui():

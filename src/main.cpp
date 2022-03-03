@@ -7,7 +7,7 @@
 using namespace ace_button;
 
 /** Defines */
-#define BAUD_RATE 9600
+#define BAUD_RATE 115200
 #define SAMPLE_TIME 33  // ms
 
 // Pins
@@ -202,6 +202,13 @@ void check_buttons(void) {
   btn_inc.check();
 }
 
+/** Print current speed and setpoint to the serial. */
+void print_speed(void) {
+  Serial.print(rpm_value);
+  Serial.print(",");
+  Serial.println(setpoint);
+}
+
 /** Compute the PID Controller Logic.
  *
  * Function is rate limited by the SAMPLE_TIME;
@@ -210,6 +217,7 @@ void process_controller(void) {
   unsigned long current_millis = millis();
   if (current_millis - previous_millis >= SAMPLE_TIME) {
     previous_millis = current_millis;
+    print_speed();
 
     if (power_status) {
       pid_cntlr.Compute();
