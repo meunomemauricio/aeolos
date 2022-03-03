@@ -1,6 +1,5 @@
 /** PID Fan Controller */
 
-#include <CmdMessenger.h>
 #include <PID_v1.h>
 
 /** Defines */
@@ -8,6 +7,8 @@
 #define SAMPLE_TIME 33 // ms
 
 // Pins
+#define BTN_MINUS 5
+#define BTN_PLUS 6
 #define FAN_CONTROL 3
 #define FAN_TACH 8
 #define FAN_POWER 10
@@ -48,6 +49,9 @@ void setup_pins()
   pinMode(FAN_CONTROL, OUTPUT);
   pinMode(FAN_TACH, INPUT);
   pinMode(LED_BUILTIN, OUTPUT);
+
+  pinMode(BTN_MINUS, INPUT_PULLUP);
+  pinMode(BTN_PLUS, INPUT_PULLUP);
 }
 
 /** Convert to RPM.
