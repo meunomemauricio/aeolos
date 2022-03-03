@@ -1,5 +1,6 @@
 /** PID Fan Controller */
 
+#include <Arduino.h>
 #include <PID_v1.h>
 
 /** Defines */
