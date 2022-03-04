@@ -1,17 +1,11 @@
 // Aeolos Enclosure Design
 // Units in mm (millimeters).
 
-// Electronics Compartment
-
-base_h = 25;  // Place to store electronics
-
 // Fan Dimensions
 
 fan_w = 120;  
 fan_d = 25;  
 fan_h = 120;  
-
-fan_ofs_h = base_h + 10;
 
 fan_corner_r = 7.5;
 
@@ -23,12 +17,28 @@ fan_hole_r = 4.5 / 2;
 fan_duct_d = fan_d + 2;
 fan_duct_r = 115 / 2;
 
-// Enclosure Dimensions
+// Enclosure Thickness
 
-enc_w = fan_w + 10 * 2;
-enc_d = fan_d + 2.5 * 2;
-enc_h = fan_h + base_h + 5 * 2;
-enc_corner_r = 10;
+enc_d_tk = 2.5;
+enc_h_tk = 3;
+
+elec_fan_tk = 3; // Between elect. and fan insert
+
+// Electronics Compartment
+
+elec_w = fan_w;
+elec_d = 35;
+elec_h = 25;
+
+// Insert on the top, for the Fan
+
+enc_fan_tol = 1;  // Tolerance between the Fan and the Enclosure
+
+insert_w = fan_w + enc_fan_tol;
+insert_d = fan_d + enc_fan_tol;
+insert_h = fan_h + enc_fan_tol;
+
+insert_ofs_h = enc_h_tk + elec_h + elec_fan_tk;
 
 // Honeycomb parameters
 
@@ -38,17 +48,14 @@ hcomb_h = fan_h;
 hcomb_r = 5;
 hcomb_tk = 1;  // Wall Thickness
 
-hcomb_ofs_h = base_h;
+hcomb_ofs_h = insert_ofs_h;
 
-// Insert on the top, for the Fan
+// Enclosure Dimensions
 
-enc_fan_tol = 1;  // Tolerance between the Fan and the Enclosure
-
-insert_w = fan_w + enc_fan_tol;
-insert_d = fan_d + enc_fan_tol;
-insert_h = fan_h + enc_fan_tol + 5;
-
-insert_ofs_h = base_h + 2;
+enc_w = fan_w + 10 * 2;
+enc_d = enc_d_tk + elec_d + enc_d_tk;
+enc_h = enc_h_tk + elec_h + elec_fan_tk + insert_h + enc_h_tk;
+enc_corner_r = 10;
 
 /* Cube with Rounded corners. */
 module roundedcube(width, depth, height, radius) {
@@ -117,15 +124,15 @@ module honeycomb(width, depth, height, radius, wall_tk) {
   h_step = 3/2 * radius;  // Horizontal Step
  
   difference() {
-    cube([width, depth, height], center=true);
+    cube([width, depth, height]);
 
     // Honeycomb Pattern
-    translate([-width/2, depth/2, -height/2]) rotate([90, 0, 0]) {
+    translate([0, depth + 1, wall_tk/2]) rotate([90, 0, 0]) {
       for (i = [0 : width / h_step ]) {
         for (j = [0 : height / inradius ]) {
           if ((i+j) % 2 == 0) {
             translate([i * h_step, j * inradius, 0])
-              hex_cell(depth, radius, wall_tk);
+              hex_cell(depth + 2, radius, wall_tk);
           }
         }
       }
@@ -136,12 +143,19 @@ module honeycomb(width, depth, height, radius, wall_tk) {
 /* Enclosure */
 module enclosure() {
   difference() {
-    roundedcube(enc_w, enc_d, enc_h, enc_corner_r);
+    translate([0, 0, enc_h/2])
+      roundedcube(enc_w, enc_d, enc_h, enc_corner_r);
 
-    translate([0, 0, insert_ofs_h])
-      cube([insert_w, insert_d, insert_h], center=true);
+    // Fan Insert
+    translate([-insert_w/2, -insert_d/2, insert_ofs_h])
+      cube([insert_w, insert_d, insert_h]);
 
-    translate([0, 0, hcomb_ofs_h])
+    // Electronics Compartment
+    translate([-elec_w/2, -elec_d/2, enc_h_tk])
+      cube([elec_w, elec_d, elec_h]);
+
+    // Mesh
+    translate([-hcomb_w/2, -hcomb_d/2, hcomb_ofs_h])
       honeycomb(hcomb_w, hcomb_d, hcomb_h, hcomb_r, hcomb_tk);
   }
 }
@@ -152,6 +166,9 @@ module enclosure() {
 //   color([.3, .3, .3])
 //   fan();
 
-translate([0, 0, enc_h/2])
-  // color([0.5, 0.5, 0.5, .6])
+difference() {
   enclosure(); 
+  // Transversal Cut
+  translate([0, -enc_d/2, enc_h/2])
+    cube([enc_w + 20, enc_d, enc_h + 20], center=true);
+}
